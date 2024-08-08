@@ -10,7 +10,7 @@ export function PlaylistsPage() {
   return (
     <Page
       className="flex flex-col items-center p-4 gap-4"
-      isLoading={playlists.length === 0 ?? true}
+      isLoading={playlists.length === 0}
       error={error}>
       <div className="flex items-center justify-center my-4">
         <span className="text-white text-[3.5rem] font-bold">Playlists</span>

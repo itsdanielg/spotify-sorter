@@ -27,7 +27,7 @@ export function useCurrentUserPlaylists(): HookReturn<useCurrentUserPlaylistsRet
         return {
           id: playlist.id,
           name: playlist.name,
-          imageURL: playlist.images[0]?.url ?? "",
+          imageURL: playlist.images === null ? "" : playlist.images[0]?.url,
           owner: playlist.owner.display_name ?? "",
           description: playlist.description ?? "",
           collaborative: playlist.collaborative,
