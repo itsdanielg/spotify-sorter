@@ -33,6 +33,12 @@ export function PlaylistBar() {
       </div>
       <div className="flex flex-col md:flex-row gap-2 ml-auto">
         <Button
+          label={"Find Duplicates"}
+          onClick={() => {
+            findDuplicates();
+          }}
+        />
+        <Button
           label="Cancel Changes"
           disabled={!playlistState.isModified}
           onClick={() => {

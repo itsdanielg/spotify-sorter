@@ -45,6 +45,7 @@ type Track = {
   releaseDate: Date;
   explicit: boolean;
   durationInMs: number;
+  preview_url: string | null;
 };
 
 export * from "./spotify";

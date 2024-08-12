@@ -10,6 +10,7 @@ import {
   PlaylistActions
 } from "../reducers";
 import { useToken } from "./useToken";
+import { getPlaylistDuplicates } from "@/util/getPlaylistDuplicates";
 
 export type usePlaylistTracksReturn = {
   playlistTracks: PlaylistTrack[];
@@ -18,6 +19,7 @@ export type usePlaylistTracksReturn = {
   moveTrack: (sourceIndex: number, destinationIndex: number) => void;
   sortPlaylist: (field: string) => void;
   cancelChanges: () => void;
+  findDuplicates: () => any;
   saveChanges: () => Promise<void>;
 };
 
@@ -72,6 +74,14 @@ export function usePlaylistTracks(playlistId: string): HookReturn<usePlaylistTra
     dispatch({ type: PlaylistActions.SAVE_SUCCESS, payload: data! });
   };
 
+  const findDuplicates = () => {
+    getPlaylistDuplicates(playlistTracks).map((duplicateTrack) => {
+      console.log(duplicateTrack.tracks[0].track.title);
+      duplicateTrack.tracks.map((track) => console.log(track.track.album));
+      console.log("");
+    });
+  };
+
   useEffect(() => {
     if (!playlistTracksAreEqualByOrder(playlistTracks, unmodifiedPlaylistTracks)) {
       dispatch({ type: PlaylistActions.MODIFY });
@@ -109,7 +119,8 @@ export function usePlaylistTracks(playlistId: string): HookReturn<usePlaylistTra
               trackNumber: playlistTrack.track.track_number,
               releaseDate: new Date(playlistTrack.track.album.release_date),
               explicit: playlistTrack.track.explicit,
-              durationInMs: playlistTrack.track.duration_ms
+              durationInMs: playlistTrack.track.duration_ms,
+              preview_url: playlistTrack.track.preview_url
             } as Track
           } as PlaylistTrack;
         }
@@ -122,8 +133,19 @@ export function usePlaylistTracks(playlistId: string): HookReturn<usePlaylistTra
     getPlaylist();
   }, []);
 
+  findDuplicates();
+
   return {
-    data: { playlistTracks, playlistState, dispatch, moveTrack, sortPlaylist, cancelChanges, saveChanges },
+    data: {
+      playlistTracks,
+      playlistState,
+      dispatch,
+      moveTrack,
+      sortPlaylist,
+      cancelChanges,
+      saveChanges,
+      findDuplicates
+    },
     error
   };
 }
