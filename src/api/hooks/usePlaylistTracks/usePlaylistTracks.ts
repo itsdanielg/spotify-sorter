@@ -1,7 +1,7 @@
 import { Dispatch, useState, useReducer, useEffect } from "react";
 import { PlaylistTrack, HookReturn, SpotifyError, SpotifyPlaylistTrack, SpotifyArtist, Track } from "@/types";
 import { markRearrangedTracks, getSortedPlaylist, unmarkPlaylistTracks, playlistTracksAreEqualByOrder } from "@/util";
-import { updatePlaylistTracks, fetchPlaylistTracks } from "../calls";
+import { updatePlaylistTracks, fetchPlaylistTracks } from "../../calls";
 import {
   usePlaylistTracksStateTypes,
   PlaylistAction,
