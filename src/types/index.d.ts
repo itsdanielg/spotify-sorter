@@ -14,6 +14,7 @@ type APIReturn<T> = Promise<
 type HookReturn<T> = {
   data: T | null;
   error: SpotifyError | null;
+  isLoading: boolean;
 };
 
 type TokenResponse = {
