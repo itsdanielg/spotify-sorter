@@ -1,4 +1,4 @@
 export * from "./useCurrentUser";
-export * from "./useCurrentUserPlaylists";
+export * from "./usePlaylists";
 export * from "./usePlaylistTracks";
 export * from "./useToken";
