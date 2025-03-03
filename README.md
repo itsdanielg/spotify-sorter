@@ -2,18 +2,28 @@
   <a href="https://vitejs.dev/">
     <img src="https://upload.wikimedia.org/wikipedia/commons/8/84/Spotify_icon.svg" alt="Logo" width="80" height="80">
   </a>
-  <br />
-  <br />
-  <h1 align="center">Spotify Sorter</h1>
+  <a href="https://spotify-sorter-tau.vercel.app/">
+    <h1 align="center">Spotify Sorter</h1>
+  </a>
+  <p align="center">
+    A web app for organizing Spotify playlists with advanced sorting options.
+  </p>
+  
 </div>
 
-[![React][React]][React-url] [![TypeScript][TypeScript]][TypeScript-url] [![Tailwind][Tailwind]][Tailwind-url] [![Vite][Vite]][Vite-url]
+[![React][React]][React-url] [![TypeScript][TypeScript]][TypeScript-url] [![Tailwind][Tailwind]][Tailwind-url] [![Vite][Vite]][Vite-url] [![ESLint][ESLint]][ESLint-url]
 
-Spotify Sorter is a web tool designed to organize Spotify playlists with more flexible options beyond the ones provided by the Spotify application.
+<p align="center">
+  <a href="https://github.com/itsdanielg/spotify-sorter/issues/new?labels=bug&template=bug_report.md">Report Bug</a>
+  ·  
+  <a href="https://github.com/itsdanielg/spotify-sorter/issues/new?labels=enhancement&template=feature_request.md">Request Feature</a>
+</p>
 
-## About
+Spotify Sorter is a web application designed to organize Spotify playlists with more flexible options beyond the ones provided by the Spotify application.
 
-In it's current version, Spotify lets users sort their playlist tracks only by the following limited attributes:
+## About The Project
+
+In its current version, Spotify lets users sort their playlist tracks by limited attributes, such as:
 
 - `Title`
 - `Artist`
@@ -21,20 +31,48 @@ In it's current version, Spotify lets users sort their playlist tracks only by t
 - `Date Added`
 - `Duration`
 
-There are no other options yet for sorting playlist tracks based on additional attributes. Thus, this tool expands sorting options by including additional attributes found within each playlist track's metadata, in addition to the options already present in Spotify.
+This app expands sorting options by including additional attributes found within each playlist track's metadata, in addition to the options already present in Spotify.
 
-Currently, this tool supports additional sorting on the following:
+**Additional Sorting Options:**
 
 - `Album Track Number`
 - `Release Date`
 
-## FAQ
+## Local Installation
 
-### Additional features planned for the future?:
+This application relies on the Spotify Web API to fetch data. However, due to API rate limits, multiple users accessing the same credentials may quickly exceed the limit.
 
-- Ability to disable attributes on field view
-- Multi field sorting
-- Mobile support
+To avoid this, you can clone this project locally and create your own Spotify Developer App to use your own credentials:
+
+### Steps:
+
+1. Clone this respository and rename .env file to be used
+
+```bash
+git clone https://github.com/itsdanielg/spotify-sorter.git
+cd spotify-sorter
+mv .env_example .env
+```
+
+2. Navigate to [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
+3. Click **Create app**, then fill out all required fields
+4. In the **Redirect URIs** section, enter the same URI found in your `.env` file
+5. Ensure **Web API** is checked
+6. Click **Save** to finalize the app
+7. After creation, navigate to **Settings** in the dashboard.
+8. Copy your **Client ID** and paste it into the `.env` file:
+
+```bash
+VITE_CLIENT_ID=your_client_id
+```
+
+8. Copy your **Client Secret** and paste it into the `.env` file:
+
+```bash
+VITE_CLIENT_SECRET=your_client_secret
+```
+
+9. Save the `.env` file
 
 [ESLint]: https://img.shields.io/badge/ESLint-4B3263?style=for-the-badge&logo=eslint&logoColor=white
 [ESLint-url]: https://eslint.org/
