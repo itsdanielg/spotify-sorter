@@ -9,8 +9,8 @@ export function usePlaylists(): HookReturn<Playlist[]> {
   });
 
   return {
-    data: data ?? null, // Ensure data is null if undefined
-    error: error ?? null, // Ensure error is null if undefined
+    data: data ?? null,
+    error: error ?? null,
     isLoading: isLoading
   };
 }

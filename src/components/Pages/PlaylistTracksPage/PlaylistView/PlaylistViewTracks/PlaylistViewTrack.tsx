@@ -1,22 +1,16 @@
-import { useContext } from "react";
 import { twMerge } from "tailwind-merge";
-import { PlaylistTracksContext } from "@/context";
 import { PlaylistTrack } from "@/types";
 import { Label } from "@/components/Atoms";
 import { AlbumCover } from "@/components/Compounds";
 
-type PlaylistViewTrackProps = Omit<PlaylistTrack, "id">;
-
 export function PlaylistViewTrack({
   index,
   addedAt,
-  addedBy,
   isLocal,
   rearranged,
-  track: { title, artists, album, albumCoverURL, trackNumber, releaseDate, explicit, durationInMs }
-}: PlaylistViewTrackProps) {
-  const { isCompact } = useContext(PlaylistTracksContext);
-
+  track: { title, artists, album, albumCoverURL, trackNumber, releaseDate, explicit },
+  isCompact
+}: Omit<PlaylistTrack, "id"> & { isCompact: boolean }) {
   return (
     <div
       className={twMerge(

@@ -1,4 +1,4 @@
-import { fetchCurrentUserPlaylists } from "@/api/calls";
+import { fetchCurrentUserPlaylists } from "@/api";
 import { SpotifyError, SpotifySimplifiedPlaylist, Playlist } from "@/types";
 
 export async function getPlaylists(): Promise<Playlist[]> {
