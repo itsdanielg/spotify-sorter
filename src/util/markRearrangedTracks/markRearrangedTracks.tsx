@@ -1,26 +1,23 @@
 import { PlaylistTrack } from "@/types";
 
 export function markRearrangedTracks(playlistTracks: PlaylistTrack[]) {
-  const newPlaylistTracks = [...playlistTracks];
-
+  const indexSet = new Set<number>();
   let realIndex = 0;
-  const indexStack: number[] = [];
 
-  return newPlaylistTracks.map((playlistTrack) => {
-    playlistTrack.rearranged = false;
-
-    while (indexStack.includes(realIndex)) {
-      indexStack.splice(indexStack.indexOf(realIndex), 1);
+  return playlistTracks.map((playlistTrack) => {
+    while (indexSet.has(realIndex)) {
+      indexSet.delete(realIndex);
       realIndex++;
     }
 
+    let rearranged = false;
     if (playlistTrack.index !== realIndex) {
-      indexStack.push(playlistTrack.index);
-      playlistTrack.rearranged = true;
+      indexSet.add(playlistTrack.index);
+      rearranged = true;
     } else {
       realIndex++;
     }
 
-    return playlistTrack;
+    return { ...playlistTrack, rearranged };
   });
 }

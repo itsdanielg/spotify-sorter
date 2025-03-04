@@ -15,6 +15,7 @@ type HookReturn<T> = {
   data: T | null;
   error: SpotifyError | null;
   isLoading: boolean;
+  callbacks?: { [key: string]: (...args: any[]) => any };
 };
 
 type TokenResponse = {
@@ -25,36 +26,41 @@ type TokenResponse = {
   refresh_token: string;
 };
 
+type PlaylistUpdateError = {
+  message: string;
+  tracksSwitched: number;
+};
+
 type Playlist = {
-  id: string;
-  name: string;
-  imageURL: string;
-  owner: string;
-  description: string;
-  collaborative: boolean;
-  isPublic: boolean;
+  readonly id: string;
+  readonly name: string;
+  readonly imageURL: string;
+  readonly owner: string;
+  readonly description: string;
+  readonly collaborative: boolean;
+  readonly isPublic: boolean;
 };
 
 type PlaylistTrack = {
-  id: string;
-  index: number;
-  addedAt: Date;
-  addedBy: string;
-  isLocal: boolean;
+  readonly id: string;
+  readonly index: number;
+  readonly addedAt: Date;
+  readonly addedBy: string;
+  readonly isLocal: boolean;
+  readonly track: Track;
   rearranged: boolean;
-  track: Track;
 };
 
 type Track = {
-  title: string;
-  artists: string[];
-  album: string;
-  albumCoverURL: string;
-  trackNumber: number;
-  releaseDate: Date;
-  explicit: boolean;
-  durationInMs: number;
+  readonly title: string;
+  readonly artists: string[];
+  readonly album: string;
+  readonly albumCoverURL: string;
+  readonly trackNumber: number;
+  readonly releaseDate: Date;
+  readonly explicit: boolean;
+  readonly durationInMs: number;
 };
 
 export * from "./spotify";
-export type { APIReturn, HookReturn, TokenResponse, Playlist, PlaylistTrack, Track };
+export type { APIReturn, HookReturn, TokenResponse, PlaylistUpdateError, Playlist, PlaylistTrack, Track };
