@@ -1,11 +1,11 @@
 import { Draggable } from "@hello-pangea/dnd";
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Handle } from "../../Atoms";
 
 export interface DraggableRowProps {
   draggableId: string;
   index: number;
-  children: JSX.Element | JSX.Element[];
+  children: ReactNode;
 }
 
 export function DraggableRow({ draggableId, index, children }: DraggableRowProps) {

@@ -1,9 +1,9 @@
-import { Dispatch, HTMLAttributes, SetStateAction } from "react";
+import { Dispatch, HTMLAttributes, ReactNode, SetStateAction } from "react";
 import ReactDOM from "react-dom";
 
 interface ModalProps extends HTMLAttributes<HTMLDivElement> {
   show: boolean;
-  children: JSX.Element | JSX.Element[];
+  children: ReactNode;
   className?: string;
 }
 

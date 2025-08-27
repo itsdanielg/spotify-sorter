@@ -2,12 +2,13 @@ import { twMerge } from "tailwind-merge";
 import { SpotifyError } from "@/types";
 import { Footer } from "@/components/Layouts";
 import { Loading, Error } from "@/components/Templates";
+import { ReactNode } from "react";
 
 interface PageProps {
   className?: string;
   isLoading?: boolean;
   error?: SpotifyError | null;
-  children?: JSX.Element | JSX.Element[];
+  children?: ReactNode;
 }
 
 export function Page({ className = "", isLoading = false, error = null, children = <></> }: PageProps) {

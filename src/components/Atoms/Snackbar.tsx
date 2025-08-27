@@ -1,4 +1,4 @@
-import { HTMLAttributes } from "react";
+import { HTMLAttributes, ReactNode } from "react";
 import ReactDOM from "react-dom";
 
 const DEFAULT_SNACKBAR_STYLE = [
@@ -14,7 +14,7 @@ const DEFAULT_SNACKBAR_STYLE = [
 ].join(" ");
 
 interface SnackbarProps extends HTMLAttributes<HTMLDivElement> {
-  children: JSX.Element | JSX.Element[];
+  children: ReactNode;
   className?: string;
 }
 
