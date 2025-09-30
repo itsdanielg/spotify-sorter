@@ -20,7 +20,7 @@ export function SaveSnackbar() {
 
   if (playlistState.saving === "complete") showResult();
   return (
-    <Snackbar className={`${visibility} ${errorStyle} flex flex-col p-4 px-6`}>
+    <Snackbar className={`${visibility} ${errorStyle} flex flex-col p-4 px-6 pointer-events-none`}>
       <span>{label}</span>
       <span>
         <strong>{playlistState.playlistTracksUpdated}</strong>
