@@ -20,10 +20,10 @@ export function PlaylistViewTrack({
   return (
     <div
       className={twMerge(
-        "flex items-center w-full transition-all [&>*]:p-2 bg-gray-6 hover:bg-opacity-100 text-white",
+        "flex items-center w-full transition-all [&>*]:p-2 bg-gray-6 hover:bg-gray-5 text-white",
         `${isLocal ? "bg-yellow-600" : ""}`,
-        `${index % 2 === 0 ? "bg-opacity-25" : "bg-opacity-50"}`,
-        `${rearranged ? " bg-green " : ""}`,
+        `${index % 2 === 0 ? "bg-gray-7" : ""}`,
+        `${rearranged ? " bg-green" : ""}`,
         `${isCompact ? "text-sm overflow-x-auto md:overflow-hidden [&>*]:truncate" : ""}`
       )}>
       <span className={`${isCompact ? "w-16 md:w-[5%]" : "w-[5%]"} text-center`}>{index + 1}</span>
