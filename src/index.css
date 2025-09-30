@@ -18,6 +18,47 @@
   --color-gray-5: #2b292a;
   --color-gray-6: #4a4545;
   --color-gray-7: rgba(74, 69, 69, 0.7);
+
+  --text-xxs: 0.625rem;
+
+  --animate-linkFade: fadeIn 0.25s;
+  --animate-snackbar: snackbar 5s ease-in-out forwards;
+
+  @keyframes fadeIn: {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fadeOut: {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes snackbar {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    10% {
+      opacity: 1;
+      transform: translateY(-10px);
+    }
+    80% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+  }
 }
 
 * {
