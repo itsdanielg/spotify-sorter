@@ -1,15 +1,15 @@
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
+import { axiosInstance } from "@/api";
 import { APIReturn, SpotifyResponseError } from "@/types";
 
 export async function updatePlaylistTrack(
-  token: string,
   playlistId: string,
   startIndex: number,
   endIndex: number
 ): APIReturn<boolean> {
   if (startIndex === endIndex) return { data: false, errorResponse: null };
 
-  return axios
+  return axiosInstance
     .put(
       `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
       {
@@ -18,7 +18,6 @@ export async function updatePlaylistTrack(
       },
       {
         headers: {
-          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json"
         }
       }

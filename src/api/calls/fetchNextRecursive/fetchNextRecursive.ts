@@ -1,24 +1,23 @@
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
+import { axiosInstance } from "@/api";
 import { APIReturn, SpotifyPlaylistTracks, SpotifyResponseError, SpotifyUserPlaylists } from "@/types";
 
 export type FetchNextRecursiveData = SpotifyUserPlaylists | SpotifyPlaylistTracks;
 
 export async function fetchNextRecursive<T extends FetchNextRecursiveData, V>(
   href: string,
-  token: string,
   dataArray: V[]
 ): APIReturn<V[]> {
   try {
-    const { data }: { data: T } = await axios.get(href, {
+    const { data }: { data: T } = await axiosInstance.get(href, {
       headers: {
-        Authorization: `Bearer ${token}`,
         "Content-Type": "application/json"
       }
     });
 
     dataArray.push(...(data.items as V[]));
     if (data.next) {
-      return await fetchNextRecursive(data.next, token, dataArray);
+      return await fetchNextRecursive(data.next, dataArray);
     }
 
     return { data: dataArray, errorResponse: null };

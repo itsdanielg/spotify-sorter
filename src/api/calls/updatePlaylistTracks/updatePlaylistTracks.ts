@@ -3,7 +3,6 @@ import { mockUpdatePlaylistItem } from "@/util/mockApi/mockUpdatePlaylistItem";
 import { updatePlaylistTrack } from "./updatePlaylistTrack";
 
 export async function updatePlaylistTracks(
-  token: string,
   playlistId: string,
   unorderedPlaylist: PlaylistTrack[],
   playlist: PlaylistTrack[]
@@ -15,7 +14,7 @@ export async function updatePlaylistTracks(
       unorderedPlaylist.find((uneditedTrack) => uneditedTrack.id === track.id)!
     );
 
-    const { data, errorResponse } = await updatePlaylistTrack(token, playlistId, startIndex, i);
+    const { data, errorResponse } = await updatePlaylistTrack(playlistId, startIndex, i);
     if (errorResponse) {
       return { data: tracksSwitched, errorResponse: errorResponse };
     }
