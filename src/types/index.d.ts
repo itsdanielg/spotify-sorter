@@ -16,6 +16,14 @@ type HookReturn<T> = {
   error: SpotifyError | null;
 };
 
+type TokenResponse = {
+  access_token: string;
+  token_type: string;
+  scope: string;
+  expires_in: number;
+  refresh_token: string;
+};
+
 type Playlist = {
   id: string;
   name: string;
@@ -48,4 +56,4 @@ type Track = {
 };
 
 export * from "./spotify";
-export type { APIReturn, HookReturn, Playlist, PlaylistTrack, Track };
+export type { APIReturn, HookReturn, TokenResponse, Playlist, PlaylistTrack, Track };

@@ -7,7 +7,7 @@ export function LogoutButton() {
   return (
     <Button
       label="Log Out"
-      onClick={() => removeToken()}
+      onClick={removeToken}
     />
   );
 }
