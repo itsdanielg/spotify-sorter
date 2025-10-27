@@ -1,11 +1,16 @@
-import { authURL } from "@/api";
-import { LinkButton } from "@/components/Atoms";
+import { getAuthURL } from "@/api";
+import { Button } from "@/components/Atoms";
 
 export function LoginButton() {
+  const handleLogin = async () => {
+    const authURL = await getAuthURL();
+    window.location.href = authURL;
+  };
+
   return (
-    <LinkButton
+    <Button
       label={"Login To Spotify".toUpperCase()}
-      to={authURL}
+      onClick={handleLogin}
     />
   );
 }

@@ -10,7 +10,8 @@ const DEFAULT_BUTTON_STYLE = [
   "disabled:pointer-events-none",
   "md:hover:bg-greenHover",
   "transition-all",
-  "duration-250"
+  "duration-250",
+  "cursor-pointer"
 ].join(" ");
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -25,23 +26,5 @@ export function Button({ label, className = "", ...props }: ButtonProps) {
       className={`${className} ${DEFAULT_BUTTON_STYLE}`}>
       {label}
     </button>
-  );
-}
-interface LinkButtonProps extends LinkProps {
-  to: string;
-  label: string;
-  disabled?: boolean;
-  className?: string;
-}
-
-export function LinkButton({ label, to, disabled = false, className = "", ...props }: LinkButtonProps) {
-  const disabledStyle = disabled ? "pointer-events-none select-none opacity-30" : "";
-  return (
-    <Link
-      {...props}
-      className={`${className} ${disabledStyle} ${DEFAULT_BUTTON_STYLE}`}
-      to={to}>
-      {label}
-    </Link>
   );
 }
