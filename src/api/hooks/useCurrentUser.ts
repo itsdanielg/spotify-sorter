@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { SpotifyError, SpotifyUser, HookReturn } from "@/types";
 import { fetchCurrentUser } from "../calls";
-import { useToken } from "./useToken";
 
 export type useCurrentUserReturn = {
   id: string;
@@ -10,8 +9,6 @@ export type useCurrentUserReturn = {
 };
 
 export function useCurrentUser(): HookReturn<useCurrentUserReturn> {
-  const { token } = useToken();
-
   const [id, setId] = useState("");
   const [name, setName] = useState("");
   const [images, setImages] = useState<string[]>([]);
@@ -19,7 +16,7 @@ export function useCurrentUser(): HookReturn<useCurrentUserReturn> {
 
   useEffect(() => {
     const getUser = async () => {
-      const { data, errorResponse } = await fetchCurrentUser(token);
+      const { data, errorResponse } = await fetchCurrentUser();
       if (errorResponse) {
         setError(errorResponse.error as SpotifyError);
         return;

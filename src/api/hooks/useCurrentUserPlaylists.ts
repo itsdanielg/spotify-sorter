@@ -1,21 +1,18 @@
 import { useEffect, useState } from "react";
 import { HookReturn, Playlist, SpotifyError, SpotifySimplifiedPlaylist } from "@/types";
 import { fetchCurrentUserPlaylists } from "../calls";
-import { useToken } from "./useToken";
 
 export type useCurrentUserPlaylistsReturn = {
   playlists: Playlist[];
 };
 
 export function useCurrentUserPlaylists(): HookReturn<useCurrentUserPlaylistsReturn> {
-  const { token } = useToken();
-
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [error, setError] = useState<SpotifyError | null>(null);
 
   useEffect(() => {
     const getPlaylists = async () => {
-      const { data, errorResponse } = await fetchCurrentUserPlaylists(token);
+      const { data, errorResponse } = await fetchCurrentUserPlaylists();
       if (errorResponse) {
         setPlaylists([]);
         setError(errorResponse.error as SpotifyError);

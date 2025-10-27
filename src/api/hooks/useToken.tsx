@@ -18,7 +18,7 @@ export function useToken(): { token: string; removeToken: () => void } {
         return;
       }
 
-      const { data, errorResponse } = await fetchToken(code, codeVerifier);
+      const { data, errorResponse } = await fetchToken({ code: code, codeVerifier: codeVerifier });
       if (!data) {
         console.error("Error fetching token:", errorResponse);
         return;

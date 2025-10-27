@@ -9,7 +9,6 @@ import {
   initialState,
   PlaylistActions
 } from "../reducers";
-import { useToken } from "./useToken";
 
 export type usePlaylistTracksReturn = {
   playlistTracks: PlaylistTrack[];
@@ -22,8 +21,6 @@ export type usePlaylistTracksReturn = {
 };
 
 export function usePlaylistTracks(playlistId: string): HookReturn<usePlaylistTracksReturn> {
-  const { token } = useToken();
-
   const [playlistTracks, setPlaylistTracks] = useState<PlaylistTrack[]>([]);
   const [unmodifiedPlaylistTracks, setUnmodifiedPlaylistTracks] = useState<PlaylistTrack[]>([]);
   const [error, setError] = useState<SpotifyError | null>(null);
@@ -54,12 +51,7 @@ export function usePlaylistTracks(playlistId: string): HookReturn<usePlaylistTra
 
   const saveChanges = async () => {
     dispatch({ type: PlaylistActions.SAVE });
-    const { data, errorResponse } = await updatePlaylistTracks(
-      token,
-      playlistId,
-      unmodifiedPlaylistTracks,
-      playlistTracks
-    );
+    const { data, errorResponse } = await updatePlaylistTracks(playlistId, unmodifiedPlaylistTracks, playlistTracks);
     if (errorResponse) {
       setError(errorResponse.error as SpotifyError);
       dispatch({ type: PlaylistActions.SAVE_ERROR, payload: data! });
@@ -83,7 +75,7 @@ export function usePlaylistTracks(playlistId: string): HookReturn<usePlaylistTra
   useEffect(() => {
     const getPlaylist = async () => {
       dispatch({ type: PlaylistActions.INITIALIZE });
-      const { data, errorResponse } = await fetchPlaylistTracks(token, playlistId);
+      const { data, errorResponse } = await fetchPlaylistTracks(playlistId);
       if (errorResponse) {
         setPlaylistTracks([]);
         setError(errorResponse.error as SpotifyError);
