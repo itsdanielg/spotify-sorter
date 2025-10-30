@@ -1,15 +1,18 @@
-import { describe, it, expect, vi } from "vitest";
-import axios, { AxiosError } from "axios";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { axiosInstance } from "@/api";
 import { SpotifyResponseError, SpotifySimplifiedPlaylist, SpotifyUserPlaylists } from "@/types";
 import * as helpers from "../fetchNextRecursive";
 import { fetchCurrentUserPlaylists } from "./fetchCurrentUserPlaylists";
 
 describe(fetchCurrentUserPlaylists, () => {
-  const mockGet = vi.spyOn(axios, "get");
+  const mockGet = vi.spyOn(axiosInstance, "get");
+  const mockFetchNextRecursive = vi.spyOn(helpers, "fetchNextRecursive");
+
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
 
   describe("when fetch is unsuccessful", async () => {
-    vi.resetAllMocks();
-
     mockGet.mockRejectedValue({
       response: {
         data: {
@@ -19,8 +22,9 @@ describe(fetchCurrentUserPlaylists, () => {
           }
         } as unknown as SpotifyResponseError
       }
-    } as AxiosError);
-    const { data, errorResponse } = await fetchCurrentUserPlaylists("token");
+    });
+
+    const { data, errorResponse } = await fetchCurrentUserPlaylists();
 
     it("data is null", () => {
       expect(data).toBeNull();
@@ -43,86 +47,94 @@ describe(fetchCurrentUserPlaylists, () => {
     });
   });
 
-  describe("when fetch is successful", async () => {
-    vi.resetAllMocks();
-    const mockFetchNextRecursive = vi.spyOn(helpers, "fetchNextRecursive");
-
-    mockGet.mockResolvedValue({
-      data: {} as SpotifyUserPlaylists
-    });
-
-    it("recursion is called", () => {
-      expect(mockFetchNextRecursive).toHaveBeenCalled();
+  describe("when fetch is successful", () => {
+    beforeEach(() => {
+      mockGet.mockResolvedValue({
+        data: { href: "test-url" } as SpotifyUserPlaylists
+      });
     });
 
     describe("when fetchNextRecursive is unsuccessful", async () => {
-      mockFetchNextRecursive.mockResolvedValue({
-        data: null,
-        errorResponse: {
-          error: {
-            status: 401,
-            message: "error caught"
-          }
-        } as unknown as SpotifyResponseError
+      let result: Awaited<ReturnType<typeof fetchCurrentUserPlaylists>>;
+
+      beforeEach(async () => {
+        mockFetchNextRecursive.mockResolvedValue({
+          data: null,
+          errorResponse: {
+            error: {
+              status: 401,
+              message: "error caught"
+            }
+          } as unknown as SpotifyResponseError
+        });
+
+        result = await fetchCurrentUserPlaylists();
       });
 
-      const { data, errorResponse } = await fetchCurrentUserPlaylists("token");
+      it("recursion is called", () => {
+        expect(mockFetchNextRecursive).toHaveBeenCalled();
+      });
 
       it("data is null", () => {
-        expect(data).toBeNull();
+        expect(result.data).toBeNull();
       });
 
       it("errorResponse is non-null", () => {
-        expect(errorResponse).not.toBeNull();
+        expect(result.errorResponse).not.toBeNull();
       });
 
       it("errorResponse is a SpotifyResponseError object", () => {
-        expect(errorResponse).toHaveProperty("error");
+        expect(result.errorResponse).toHaveProperty("error");
       });
 
       it("errorResponse.error has status", () => {
-        expect(errorResponse.error.status).toBe(401);
+        expect(result.errorResponse.error.status).toBe(401);
       });
 
       it("errorResponse.error has message", () => {
-        expect(errorResponse.error.message).toBe("error caught");
+        expect(result.errorResponse.error.message).toBe("error caught");
       });
     });
 
     describe("when fetchNextRecursive is successful", async () => {
-      mockFetchNextRecursive.mockResolvedValue({
-        data: [
-          {
-            id: "",
-            name: "",
-            collaborative: false,
-            description: null,
-            href: "",
-            images: [],
-            owner: {
+      let result: Awaited<ReturnType<typeof fetchCurrentUserPlaylists>>;
+
+      beforeEach(async () => {
+        mockFetchNextRecursive.mockResolvedValue({
+          data: [
+            {
               id: "",
-              display_name: null,
-              images: [],
-              type: "user"
-            },
-            public: false,
-            tracks: {
+              name: "",
+              collaborative: false,
+              description: null,
               href: "",
-              total: 0
-            },
-            type: "playlist"
-          }
-        ] as unknown as SpotifySimplifiedPlaylist[],
-        errorResponse: null
+              images: [],
+              owner: {
+                id: "",
+                display_name: null,
+                images: [],
+                type: "user"
+              },
+              public: false,
+              tracks: {
+                href: "",
+                total: 0
+              },
+              type: "playlist"
+            }
+          ] as unknown as SpotifySimplifiedPlaylist[],
+          errorResponse: null
+        });
+
+        result = await fetchCurrentUserPlaylists();
       });
-      const { data, errorResponse } = await fetchCurrentUserPlaylists("token");
 
       it("errorResponse is null", () => {
-        expect(errorResponse).toBeNull();
+        expect(result.errorResponse).toBeNull();
       });
 
       it("data is non-null", () => {
-        expect(data).not.toBeNull();
+        expect(result.data).not.toBeNull();
       });
 
       describe("data is a SpotifySimplifiedPlaylist array", () => {
@@ -151,7 +163,7 @@ describe(fetchCurrentUserPlaylists, () => {
 
         Object.keys(mockedPlaylists[0]).forEach((key) => {
           it(`data element has ${key} property`, () => {
-            expect((data as SpotifySimplifiedPlaylist[])[0]).toHaveProperty(key);
+            expect((result.data as SpotifySimplifiedPlaylist[])[0]).toHaveProperty(key);
           });
         });
       });

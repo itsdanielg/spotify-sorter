@@ -1,14 +1,16 @@
-import { describe, it, expect, vi } from "vitest";
-import axios, { AxiosError } from "axios";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { axiosInstance } from "@/api";
 import { SpotifyResponseError, SpotifyUser } from "@/types";
 import { fetchCurrentUser } from "./fetchCurrentUser";
 
 describe(fetchCurrentUser, () => {
-  const mockGet = vi.spyOn(axios, "get");
+  const mockGet = vi.spyOn(axiosInstance, "get");
+
+  beforeEach(() => {
+    vi.resetAllMocks();
+  });
 
   describe("when fetch is unsuccessful", async () => {
-    vi.resetAllMocks();
-
     mockGet.mockRejectedValue({
       response: {
         data: {
@@ -18,8 +20,9 @@ describe(fetchCurrentUser, () => {
           }
         } as unknown as SpotifyResponseError
       }
-    } as AxiosError);
-    const { data, errorResponse } = await fetchCurrentUser("token");
+    });
+
+    const { data, errorResponse } = await fetchCurrentUser();
 
     it("data is null", () => {
       expect(data).toBeNull();
@@ -43,8 +46,6 @@ describe(fetchCurrentUser, () => {
   });
 
   describe("when fetch is successful", async () => {
-    vi.resetAllMocks();
-
     mockGet.mockResolvedValue({
       data: {
         id: "",
@@ -53,7 +54,8 @@ describe(fetchCurrentUser, () => {
         type: "user"
       } as unknown as SpotifyUser
     });
-    const { data, errorResponse } = await fetchCurrentUser("token");
+
+    const { data, errorResponse } = await fetchCurrentUser();
 
     it("errorResponse is null", () => {
       expect(errorResponse).toBeNull();
