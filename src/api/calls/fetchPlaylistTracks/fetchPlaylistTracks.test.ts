@@ -1,194 +1,196 @@
-import { describe, it, expect, vi } from "vitest";
-import axios, { AxiosError } from "axios";
-import { SpotifyPlaylistTrack, SpotifyPlaylistTracks, SpotifyResponseError, SpotifySimplifiedPlaylist } from "@/types";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { axiosInstance, fetchPlaylistTracks } from "@/api";
+import { SpotifyResponseError, SpotifyPlaylistTrack, SpotifyPlaylistTracks } from "@/types";
 import * as helpers from "../fetchNextRecursive";
-import { fetchPlaylistTracks } from "./fetchPlaylistTracks";
 
 describe(fetchPlaylistTracks, () => {
-  const mockGet = vi.spyOn(axios, "get");
+  const mockGet = vi.spyOn(axiosInstance, "get");
+  const mockFetchNextRecursive = vi.spyOn(helpers, "fetchNextRecursive");
 
-  describe("when fetch is unsuccessful", async () => {
+  beforeEach(() => {
     vi.resetAllMocks();
+  });
 
-    mockGet.mockRejectedValue({
-      response: {
-        data: {
-          error: {
-            status: 401,
-            message: "error caught"
-          }
-        } as unknown as SpotifyResponseError
-      }
-    } as AxiosError);
-    const { data, errorResponse } = await fetchPlaylistTracks("token", "id");
+  describe("when fetch is unsuccessful", () => {
+    let result: Awaited<ReturnType<typeof fetchPlaylistTracks>>;
+
+    beforeEach(async () => {
+      mockGet.mockRejectedValue({
+        response: {
+          data: {
+            error: {
+              status: 401,
+              message: "error caught"
+            }
+          } as unknown as SpotifyResponseError
+        }
+      });
+
+      result = await fetchPlaylistTracks("test-playlist-id");
+    });
 
     it("data is null", () => {
-      expect(data).toBeNull();
+      expect(result.data).toBeNull();
     });
 
     it("errorResponse is non-null", () => {
-      expect(errorResponse).not.toBeNull();
+      expect(result.errorResponse).not.toBeNull();
     });
 
     it("errorResponse is a SpotifyResponseError object", () => {
-      expect(errorResponse).toHaveProperty("error");
+      expect(result.errorResponse).toHaveProperty("error");
     });
 
     it("errorResponse.error has status", () => {
-      expect(errorResponse.error.status).toBe(401);
+      expect(result.errorResponse.error.status).toBe(401);
     });
 
     it("errorResponse.error has message", () => {
-      expect(errorResponse.error.message).toBe("error caught");
+      expect(result.errorResponse.error.message).toBe("error caught");
     });
   });
 
-  describe("when fetch is successful", async () => {
-    vi.resetAllMocks();
-    const mockFetchNextRecursive = vi.spyOn(helpers, "fetchNextRecursive");
-
-    mockGet.mockResolvedValue({
-      data: {} as SpotifyPlaylistTracks
+  describe("when fetch is successful", () => {
+    beforeEach(() => {
+      mockGet.mockResolvedValue({
+        data: { href: "test-url" } as SpotifyPlaylistTracks
+      });
     });
 
-    it("recursion is called", () => {
-      expect(mockFetchNextRecursive).toHaveBeenCalled();
-    });
+    describe("when fetchNextRecursive is unsuccessful", () => {
+      let result: Awaited<ReturnType<typeof fetchPlaylistTracks>>;
 
-    describe("when fetchNextRecursive is unsuccessful", async () => {
-      mockFetchNextRecursive.mockResolvedValue({
-        data: null,
-        errorResponse: {
-          error: {
-            status: 401,
-            message: "error caught"
-          }
-        } as unknown as SpotifyResponseError
+      beforeEach(async () => {
+        mockFetchNextRecursive.mockResolvedValue({
+          data: null,
+          errorResponse: {
+            error: {
+              status: 401,
+              message: "error caught"
+            }
+          } as unknown as SpotifyResponseError
+        });
+
+        result = await fetchPlaylistTracks("test-playlist-id");
       });
 
-      const { data, errorResponse } = await fetchPlaylistTracks("token", "id");
+      it("recursion is called", () => {
+        expect(mockFetchNextRecursive).toHaveBeenCalled();
+      });
 
       it("data is null", () => {
-        expect(data).toBeNull();
+        expect(result.data).toBeNull();
       });
 
       it("errorResponse is non-null", () => {
-        expect(errorResponse).not.toBeNull();
+        expect(result.errorResponse).not.toBeNull();
       });
 
       it("errorResponse is a SpotifyResponseError object", () => {
-        expect(errorResponse).toHaveProperty("error");
+        expect(result.errorResponse).toHaveProperty("error");
       });
 
       it("errorResponse.error has status", () => {
-        expect(errorResponse.error.status).toBe(401);
+        expect(result.errorResponse.error.status).toBe(401);
       });
 
       it("errorResponse.error has message", () => {
-        expect(errorResponse.error.message).toBe("error caught");
+        expect(result.errorResponse.error.message).toBe("error caught");
       });
     });
 
-    describe("when fetchNextRecursive is successful", async () => {
-      mockFetchNextRecursive.mockResolvedValue({
-        data: [
-          {
-            added_at: "",
-            added_by: undefined,
-            is_local: false,
-            track: {
-              id: "",
-              name: "",
-              album: {
+    describe("when fetchNextRecursive is successful", () => {
+      let result: Awaited<ReturnType<typeof fetchPlaylistTracks>>;
+
+      beforeEach(async () => {
+        mockFetchNextRecursive.mockResolvedValue({
+          data: [
+            {
+              added_at: "",
+              added_by: {
+                id: "",
+                type: "user"
+              },
+              is_local: false,
+              track: {
                 id: "",
                 name: "",
-                album_type: "album",
                 artists: [],
-                href: "",
-                images: [],
-                release_date: "",
-                release_date_precision: "year",
-                restrictions: {
-                  reason: "market"
+                album: {
+                  id: "",
+                  name: "",
+                  images: []
                 },
-                total_tracks: 0,
-                type: "album"
-              },
-              artists: [],
-              duration_ms: 0,
-              explicit: false,
-              href: "",
-              is_local: false,
-              is_playable: false,
-              popularity: 0,
-              preview_url: null,
-              restrictions: {
-                reason: "market"
-              },
-              track_number: 0,
-              type: "track"
+                duration_ms: 0,
+                explicit: false,
+                type: "track",
+                uri: ""
+              }
             }
-          }
-        ] as unknown as SpotifyPlaylistTrack[],
-        errorResponse: null
+          ] as unknown as SpotifyPlaylistTrack[],
+          errorResponse: null
+        });
+
+        result = await fetchPlaylistTracks("test-playlist-id");
       });
-      const { data, errorResponse } = await fetchPlaylistTracks("token", "id");
+
+      it("recursion is called", () => {
+        expect(mockFetchNextRecursive).toHaveBeenCalled();
+      });
 
       it("errorResponse is null", () => {
-        expect(errorResponse).toBeNull();
+        expect(result.errorResponse).toBeNull();
       });
 
       it("data is non-null", () => {
-        expect(data).not.toBeNull();
+        expect(result.data).not.toBeNull();
       });
 
-      describe("data is a SpotifySimplifiedPlaylist array", () => {
-        const mockPlaylistTracks: SpotifyPlaylistTrack[] = [
-          {
-            added_at: "",
-            added_by: {
-              id: "",
-              type: "user"
-            },
-            is_local: false,
-            track: {
+      describe("data is a SpotifyPlaylistTrack array", () => {
+        const mockedTrack: SpotifyPlaylistTrack = {
+          added_at: "",
+          added_by: {
+            id: "",
+            type: "user"
+          },
+          is_local: false,
+          track: {
+            id: "",
+            name: "",
+            artists: [],
+            album: {
               id: "",
               name: "",
-              album: {
-                id: "",
-                name: "",
-                album_type: "album",
-                artists: [],
-                href: "",
-                images: [],
-                release_date: "",
-                release_date_precision: "year",
-                restrictions: {
-                  reason: "market"
-                },
-                total_tracks: 0,
-                type: "album"
-              },
+              images: [],
+              album_type: "album",
               artists: [],
-              duration_ms: 0,
-              explicit: false,
               href: "",
-              is_local: false,
-              is_playable: false,
-              popularity: 0,
-              preview_url: null,
+              release_date: "",
+              release_date_precision: "year",
               restrictions: {
-                reason: "market"
+                reason: "explicit"
               },
-              track_number: 0,
-              type: "track"
-            }
+              total_tracks: 0,
+              type: "album"
+            },
+            duration_ms: 0,
+            explicit: false,
+            type: "track",
+            href: "",
+            is_local: false,
+            is_playable: false,
+            popularity: 0,
+            preview_url: null,
+            restrictions: {
+              reason: "explicit"
+            },
+            track_number: 0
           }
-        ];
+        };
 
-        Object.keys(mockPlaylistTracks[0]).forEach((key) => {
+        Object.keys(mockedTrack).forEach((key) => {
           it(`data element has ${key} property`, () => {
-            expect((data as SpotifyPlaylistTrack[])[0]).toHaveProperty(key);
+            expect((result.data as SpotifyPlaylistTrack[])[0]).toHaveProperty(key);
           });
         });
       });
