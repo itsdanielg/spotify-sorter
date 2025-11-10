@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { updatePlaylistTracks } from "@/api/calls";
+import { reorderPlaylist } from "@/api/operations";
 import { PlaylistTrack, HookReturn, SpotifyError, PlaylistUpdateError } from "@/types";
 import { markRearrangedTracks, getSortedPlaylist } from "@/util";
-import { useToken } from "../useToken";
 import { getPlaylistTracks } from "./getPlaylistTracks";
 
 type usePlaylistTracksReturn = Omit<HookReturn<PlaylistTrack[]>, "data" | "callbacks"> & {
@@ -37,7 +36,7 @@ export function usePlaylistTracks(playlistId: string): usePlaylistTracksReturn {
   });
 
   const saveMutation = useMutation({
-    mutationFn: async () => updatePlaylistTracks(playlistId, playlistTracks, workingPlaylistTracks),
+    mutationFn: async () => reorderPlaylist(playlistId, playlistTracks, workingPlaylistTracks),
     onSuccess: (res) => {
       queryClient.invalidateQueries({ queryKey: ["currentPlaylistTracks"] });
       setTracksSwitched(res.data!);
