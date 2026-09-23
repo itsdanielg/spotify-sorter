@@ -94,11 +94,32 @@ describe(fetchToken, () => {
         const [url, body, config] = callArgs;
         expect(url).toBe("https://accounts.spotify.com/api/token");
         expect(config?.headers?.["Content-Type"]).toBe("application/x-www-form-urlencoded");
+        expect(config?.timeout).toBe(10000);
 
         const bodyParams = new URLSearchParams(body as string);
         expect(bodyParams.get("code")).toBe("valid_code");
         expect(bodyParams.get("code_verifier")).toBe("verifier123");
         expect(bodyParams.get("grant_type")).toBe("authorization_code");
+      });
+    });
+
+    describe("when the request fails with no response (network error or timeout)", () => {
+      let result: Awaited<ReturnType<typeof fetchToken>>;
+
+      beforeEach(async () => {
+        // A timeout/network failure rejects with an AxiosError that has no
+        // `.response` at all — unlike an HTTP error response from Spotify.
+        mockPost.mockRejectedValue(new Error("timeout of 10000ms exceeded"));
+
+        result = await fetchToken({ code: "valid_code", codeVerifier: "verifier123" });
+      });
+
+      it("data is null", () => {
+        expect(result.data).toBeNull();
+      });
+
+      it("errorResponse is null, not undefined", () => {
+        expect(result.errorResponse).toBeNull();
       });
     });
   });
@@ -180,6 +201,7 @@ describe(fetchToken, () => {
         const [url, body, config] = callArgs;
         expect(url).toBe("https://accounts.spotify.com/api/token");
         expect(config?.headers?.["Content-Type"]).toBe("application/x-www-form-urlencoded");
+        expect(config?.timeout).toBe(10000);
 
         const bodyParams = new URLSearchParams(body as string);
         expect(bodyParams.get("refresh_token")).toBe("valid_refresh_token");
