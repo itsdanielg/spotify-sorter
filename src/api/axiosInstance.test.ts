@@ -190,6 +190,53 @@ describe("axiosInstance interceptors", () => {
 
             await axiosInstance.get("/test");
           });
+
+          it("dedupes concurrent 401s into a single refresh call", async () => {
+            // Delay the refresh so multiple 401s overlap in-flight, the
+            // way they would if several requests failed around the same
+            // moment as the token expired.
+            mockFetchToken.mockImplementation(
+              () =>
+                new Promise((resolve) =>
+                  setTimeout(
+                    () =>
+                      resolve({
+                        data: {
+                          access_token: "new-token",
+                          refresh_token: "refresh-token",
+                          token_type: "Bearer",
+                          expires_in: 3600,
+                          scope: "test"
+                        },
+                        errorResponse: null
+                      }),
+                    10
+                  )
+                )
+            );
+
+            let callCount = 0;
+            const mockAdapter = vi.fn().mockImplementation(() => {
+              callCount++;
+              // First two calls (the two concurrent requests) both 401.
+              if (callCount <= 2) {
+                return Promise.reject({
+                  response: { status: 401 },
+                  config: { headers: {} }
+                });
+              }
+              return Promise.resolve({ data: "success", status: 200 });
+            });
+            axiosInstance.defaults.adapter = mockAdapter;
+
+            const [first, second] = await Promise.all([axiosInstance.get("/test-a"), axiosInstance.get("/test-b")]);
+
+            expect(first.data).toBe("success");
+            expect(second.data).toBe("success");
+            // The key assertion: one refresh call serves both retries,
+            // not one refresh call per failed request.
+            expect(mockFetchToken).toHaveBeenCalledTimes(1);
+          });
         });
 
         describe("when token refresh fails", () => {
